@@ -1,4 +1,4 @@
-<app-contact-form (userAdded)="handleUpdate()"></app-contact-form>
+<app-contact-form [contact]="selectedContact" [mode]="selectedContact?.firstName ? 'edit' : 'create'" (userAdded)="handleUpdate()"></app-contact-form>
 <div *ngFor="let contact of contacts">
   {{contact.firstName}}, {{contact.lastName}}, {{contact.email}} <button (click)="handleEdit(contact)">Edit</button><button (click)="handleDelete(contact)">Delete</button>
 </div>

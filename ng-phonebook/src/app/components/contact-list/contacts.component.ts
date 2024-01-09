@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ContactService } from '../../services/contacts.service';
 import { Contact } from './contact';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-contacts',
@@ -11,6 +10,7 @@ import { Router } from '@angular/router';
 })
 export class ContactsComponent implements OnInit {
   public contacts = [];
+  selectedContact: Contact = {} as Contact;
 
   constructor(private contactService: ContactService) {}
 
@@ -25,6 +25,7 @@ export class ContactsComponent implements OnInit {
   }
 
   handleUpdate() {
+    this.selectedContact = {} as Contact;
     this.readAll();
   }
 
@@ -36,7 +37,8 @@ export class ContactsComponent implements OnInit {
 
   handleEdit(contact: Contact) {
     // this.router.navigate([`edit/${contact.id}`]);
-    this.contactService.selectedContact.next(contact);
+    // this.contactService.selectedContact.next(contact);
+    this.selectedContact = contact;
   }
 
 }

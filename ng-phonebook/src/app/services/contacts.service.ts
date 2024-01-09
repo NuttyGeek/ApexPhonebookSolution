@@ -14,7 +14,7 @@ const httpOptions = {
 @Injectable()
 export class ContactService {
     contacts: any[] = [];
-    selectedContact = new Subject<Contact>();
+    // selectedContact = new Subject<Contact>();
 
     constructor(private http: HttpClient) {
     }

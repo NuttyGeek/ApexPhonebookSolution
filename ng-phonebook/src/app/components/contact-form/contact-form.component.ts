@@ -1,36 +1,41 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {ContactService} from "../../services/contacts.service";
-import {NgForm} from "@angular/forms";
-import {Contact} from "../contact-list/contact";
-import {ActivatedRoute, Router} from '@angular/router';
-import { conditionallyCreateMapObjectLiteral } from '@angular/compiler/src/render3/view/util';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { NgForm } from "@angular/forms";
+import { ContactService } from "../../services/contacts.service";
+import { Contact } from "../contact-list/contact";
 
 @Component({
     selector: 'app-contact-form',
     templateUrl: './contact-form.component.html',
     styleUrls: ['./contact-form.component.css']
 })
-export class ContactFormComponent implements OnInit {
+export class ContactFormComponent implements OnInit, OnChanges {
     model = <Contact> {};
+    @Input() contact: Contact = {} as Contact;
     submitted = false;
     btnName = 'Submit';
     @Output() userAdded = new EventEmitter();
     id: number = -1;
-    mode: 'create' | 'edit' = 'create';
+    @Input() mode: 'create' | 'edit' = 'create';
 
     constructor(private contactService: ContactService) {
     }
 
+    ngOnChanges() {
+        if(this.contact) {
+            this.model = {...this.contact};
+        }
+    }
+
     ngOnInit(): void {
-        this.contactService.selectedContact.subscribe((contact: Contact) => {
-            if(contact) {
-                this.model = {...contact};
-                this.mode = 'edit';
-            } else {
-                this.mode = 'create';
-                this.model = this.createNew();
-            }
-        });
+        // this.contactService.selectedContact.subscribe((contact: Contact) => {
+        //     if(contact) {
+        //         this.model = {...contact};
+        //         this.mode = 'edit';
+        //     } else {
+        //         this.mode = 'create';
+        //         this.model = this.createNew();
+        //     }
+        // });
     }
 
     createNew() {
@@ -46,6 +51,7 @@ export class ContactFormComponent implements OnInit {
     }
 
     onSubmit(contactForm: NgForm) {
+        debugger;
         if(contactForm.valid) {
             this.submitted = true;
             const hasContact = this.contactService.hasContact({...this.model});
@@ -61,10 +67,11 @@ export class ContactFormComponent implements OnInit {
                 this.submitted = false;
                 contactForm.resetForm();
                 this.userAdded.emit();
-                if(this.mode == 'edit') {
-                    // this.router.navigate(['/'])
-                    this.contactService.selectedContact.next({} as Contact);
-                }
+                // if(this.mode == 'edit') {
+                //     // this.router.navigate(['/'])
+                //     // this.contactService.selectedContact.next({} as Contact);
+                //     // this.userAdded.emit();
+                // }
                 this.mode = 'create';
             });
             console.log('submitted');
