@@ -55,7 +55,7 @@ export class ContactFormComponent implements OnInit, OnChanges {
         if(contactForm.valid) {
             this.submitted = true;
             const hasContact = this.contactService.hasContact({...this.model});
-            if(hasContact) {
+            if(hasContact && this.mode == 'create') {
                 alert('Already has this user');
                 this.submitted = false;
                 return;
