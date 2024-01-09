@@ -3,6 +3,7 @@ import {ContactService} from "../../services/contacts.service";
 import {NgForm} from "@angular/forms";
 import {Contact} from "../contact-list/contact";
 import {ActivatedRoute, Router} from '@angular/router';
+import { conditionallyCreateMapObjectLiteral } from '@angular/compiler/src/render3/view/util';
 
 @Component({
     selector: 'app-contact-form',
@@ -17,19 +18,18 @@ export class ContactFormComponent implements OnInit {
     id: number = -1;
     mode: 'create' | 'edit' = 'create';
 
-    constructor(private contactService: ContactService, private route: ActivatedRoute, private router: Router) {
+    constructor(private contactService: ContactService) {
     }
 
     ngOnInit(): void {
-        this.route.url.subscribe((res) => {
-            console.log(':: url', res);
-            this.mode = res.map((r) => r.path).includes('edit') ? 'edit' : 'create';
-            console.log(':: mode',this.mode);
-        })
-        this.route.params.subscribe((res) => {
-            console.log(':: params', res, window.location.href);
-            this.id = Number(res?.id);
-            this.getContact(this.id);
+        this.contactService.selectedContact.subscribe((contact: Contact) => {
+            if(contact) {
+                this.model = {...contact};
+                this.mode = 'edit';
+            } else {
+                this.mode = 'create';
+                this.model = this.createNew();
+            }
         });
     }
 
@@ -56,35 +56,13 @@ export class ContactFormComponent implements OnInit {
                 contactForm.resetForm();
                 this.userAdded.emit();
                 if(this.mode == 'edit') {
-                    this.router.navigate(['/'])
+                    // this.router.navigate(['/'])
+                    this.contactService.selectedContact.next({} as Contact);
                 }
+                this.mode = 'create';
             });
-
-            /*
-            if(this.mode == 'create') {
-                this.contactService.postContact(this.model)
-                .subscribe(contact => {
-                    console.log('object saved', contact);
-                    this.model = this.createNew();
-                    this.submitted = false;
-                    contactForm.resetForm();
-                    this.userAdded.emit();
-                });
-            } else if(this.mode == 'edit'){
-                this.contactService.putContact(this.model)
-                .subscribe(contact => {
-                    console.log('object saved', contact);
-                    this.model = this.createNew();
-                    this.submitted = false;
-                    contactForm.resetForm();
-                    this.userAdded.emit();
-                });
-            }*/
-
             console.log('submitted');
-            
         }
-        
     }
 
     get diagnostic() {

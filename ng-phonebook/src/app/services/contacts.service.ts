@@ -3,6 +3,7 @@ import {throwError} from "rxjs";
 import {catchError} from "rxjs/operators";
 import {Injectable} from "@angular/core";
 import {Contact} from "../components/contact-list/contact";
+import {Subject} from 'rxjs';
 
 const httpOptions = {
     headers: new HttpHeaders({
@@ -12,6 +13,8 @@ const httpOptions = {
 
 @Injectable()
 export class ContactService {
+
+    selectedContact = new Subject<Contact>();
 
     constructor(private http: HttpClient) {
     }

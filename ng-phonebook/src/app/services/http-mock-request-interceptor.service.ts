@@ -8,7 +8,6 @@ const urls = [
         url: "http://localhost:8080/api/contact",
         method: 'GET',
         getData: (request, id) => {
-            debugger;
             console.log(request, id);
             return storage.data
         }
@@ -25,7 +24,6 @@ const urls = [
         url: "http://localhost:8080/api/contact/#",
         method: 'GET',
         getData: (request, id) => {
-            debugger;
             return storage.data.filter(item => item.id+"" === id)[0]
         }
     }, {
@@ -41,9 +39,12 @@ const urls = [
         url: "http://localhost:8080/api/contact/#",
         method: 'DELETE',
         getData: (request, id) => {
-            let items = storage.data.filter(item => item.id+"" !== id);
-            Object.assign(items, request.body);
-            return items
+            // let items = storage.data.filter(item => item.id+"" !== id);
+            const foundIndex = storage.data.findIndex((val) => val.id == id+'');
+            storage.data.splice(foundIndex, 1);
+            let items = [...storage.data];
+            // Object.assign([...storage.data], request.body);
+            return items;
         }
     }
 ];
@@ -55,9 +56,7 @@ export class HttpMockRequestInterceptor implements HttpInterceptor {
     }
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        debugger;
         for (const element of urls) {
-
             if (request.method == element.method) {
                 if (request.url === element.url) {
                     return of(new HttpResponse({status: 200, body: element.getData(request, null)}));
@@ -70,7 +69,6 @@ export class HttpMockRequestInterceptor implements HttpInterceptor {
                     }
                 }
             }
-
             console.log("Unable to find the path", request.url, request.method)
         }
 

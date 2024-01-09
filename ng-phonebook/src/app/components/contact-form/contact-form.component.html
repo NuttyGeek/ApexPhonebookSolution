@@ -1,6 +1,5 @@
 <div class="container">
   <div [hidden]="submitted"></div>
-  <a *ngIf="mode == 'edit'" routerLink="/">Back to Home</a>
   <h1>{{ mode == 'create' ? 'Add' : 'Edit' }} Contact</h1>
   <form (ngSubmit)="onSubmit(contactForm)" #contactForm="ngForm">
     <div class="form-group">
