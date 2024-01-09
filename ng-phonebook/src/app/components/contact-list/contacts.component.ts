@@ -25,14 +25,12 @@ export class ContactsComponent implements OnInit {
   }
 
   handleUpdate() {
-    console.log(':: handle update');
     this.readAll();
   }
 
   handleDelete(contact: Contact) {
     this.contactService.deleteContact(Number(contact?.id)).subscribe((res) => {
-      console.log(':: delete contact', res);
-      // this.readAll();
+      this.readAll();
     });
   }
 
@@ -40,4 +38,5 @@ export class ContactsComponent implements OnInit {
     // this.router.navigate([`edit/${contact.id}`]);
     this.contactService.selectedContact.next(contact);
   }
+
 }

@@ -1,6 +1,6 @@
 import {HttpClient, HttpErrorResponse, HttpHeaders} from "@angular/common/http";
 import {throwError} from "rxjs";
-import {catchError} from "rxjs/operators";
+import {catchError, tap} from "rxjs/operators";
 import {Injectable} from "@angular/core";
 import {Contact} from "../components/contact-list/contact";
 import {Subject} from 'rxjs';
@@ -13,12 +13,11 @@ const httpOptions = {
 
 @Injectable()
 export class ContactService {
-
+    contacts: any[] = [];
     selectedContact = new Subject<Contact>();
 
     constructor(private http: HttpClient) {
     }
-
     serverUrl = 'http://localhost:8080/api/contact';
 
     private static handleError(error: HttpErrorResponse) {
@@ -50,12 +49,22 @@ export class ContactService {
 
     loadAll() {
         return this.http.get<Contact[]>(this.serverUrl, httpOptions)
-            .pipe(catchError(ContactService.handleError));
+            .pipe(
+                tap((res: any) => {
+                    this.contacts = res;
+                }),
+                catchError(ContactService.handleError),
+                );
     }
 
     getById(id) {
         return this.http.get<Contact>(this.serverUrl + '/' + id, httpOptions)
             .pipe(catchError(ContactService.handleError));
+    }
+
+    hasContact(contact: Contact): boolean {
+        const found = this.contacts.findIndex((c: Contact) => (c.firstName.toLowerCase() == contact?.firstName?.toLowerCase()) && (c.lastName.toLowerCase() == contact?.lastName?.toLowerCase()));
+        return found > -1;
     }
 
 }

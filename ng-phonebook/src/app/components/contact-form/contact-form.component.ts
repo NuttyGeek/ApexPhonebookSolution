@@ -48,6 +48,12 @@ export class ContactFormComponent implements OnInit {
     onSubmit(contactForm: NgForm) {
         if(contactForm.valid) {
             this.submitted = true;
+            const hasContact = this.contactService.hasContact({...this.model});
+            if(hasContact) {
+                alert('Already has this user');
+                this.submitted = false;
+                return;
+            }
             let obs = this.mode == 'create' ? this.contactService.postContact(this.model) : this.contactService.putContact(this.model);
             obs.subscribe((contact) => {
                 console.log('object saved', contact);
